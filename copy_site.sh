@@ -3,7 +3,7 @@
 # HEADER
 #================================================================
 #% SYNOPSIS
-#+    ${SCRIPT_NAME} [-h] USERNAME DB_NAME_PROD DB_USERNAME_PROD DB_PASSWORD_PROD HOME_PROD DB_NAME_DEV DB_USERNAME_DEV DB_PASSWORD_DEV HOME_DEV
+#+    ${SCRIPT_NAME} [-h] REPO_URL BRANCH_NAME USERNAME DB_NAME_PROD DB_USERNAME_PROD DB_PASSWORD_PROD HOME_PROD DB_NAME_DEV DB_USERNAME_DEV DB_PASSWORD_DEV HOME_DEV
 #%
 #% DESCRIPTION
 #%    Copy a site from prod to another one like dev or test.
@@ -104,25 +104,17 @@ if [ "$#" -ne 9 ]; then
   exit 1
 fi
 
-USERNAME=$1
-DB_NAME_PROD=$2
-DB_USERNAME_PROD=$3
-DB_PASSWORD_PROD=$4
-HOME_PROD=$5
-DB_NAME_DEV=$6
-DB_USERNAME_DEV=$7
-DB_PASSWORD_DEV=$8
-HOME_DEV=$9
-
-#echo "USER = '$USER'"
-#echo "DB_NAME_PROD = '$DB_NAME_PROD'"
-#echo "DB_USERNAME_PROD = '$DB_USERNAME_PROD'"
-#echo "DB_PASSWORD_PROD = '$DB_PASSWORD_PROD'"
-#echo "HOME_PROD = '$HOME_PROD'"
-#echo "DB_NAME_DEV = '$DB_NAME_DEV'"
-#echo "DB_USERNAME_DEV = '$DB_USERNAME_DEV'"
-#echo "DB_PASSWORD_DEV = '$DB_PASSWORD_DEV'"
-#echo "HOME_DEV = '$HOME_DEV'"
+REPO_URL=$1
+BRANCH_NAME=$2
+USERNAME=$3
+DB_NAME_PROD=$4
+DB_USERNAME_PROD=$5
+DB_PASSWORD_PROD=$6
+HOME_PROD=$7
+DB_NAME_DEV=$8
+DB_USERNAME_DEV=$8
+DB_PASSWORD_DEV=$10
+HOME_DEV=$11
 
 rndstr=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''`
 
@@ -138,9 +130,19 @@ cd $HOME_PROD
 # Cd to dev
 cd $HOME_DEV
 
+# Get code from git repo
+git clone $REPO_URL $BRANCH_NAME
+
+# CD to public_html
+cd public_html
+
 # Drop all tables in the existing DEV database
+# The dev DB must already exists
 # @todo Is there a better way to do that?
-echo "SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')  FROM information_schema.tables  WHERE table_schema = 'user_dev';" | /usr/local/bin/drush --root=. --db-url=mysql://$DB_USERNAME_DEV:$DB_PASSWORD_DEV@localhost/$DB_NAME_DEV sql-cli | tail -n +2 | /usr/local/bin/drush --root=. --db-url=mysql://$DB_USERNAME_DEV:$DB_PASSWORD_DEV@localhost/$DB_NAME_DEV sql-cli
+echo "SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')  FROM information_schema.tables  WHERE table_schema = 'user_dev';"\
+  | /usr/local/bin/drush --root=. --db-url=mysql://$DB_USERNAME_DEV:$DB_PASSWORD_DEV@localhost/$DB_NAME_DEV sql-cli\
+  | tail -n +2\
+  | /usr/local/bin/drush --root=. --db-url=mysql://$DB_USERNAME_DEV:$DB_PASSWORD_DEV@localhost/$DB_NAME_DEV sql-cli
 
 # Create settings.php file
 rm -f $HOME_DEV/sites/default/settings.php
