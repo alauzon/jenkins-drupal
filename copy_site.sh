@@ -18,8 +18,6 @@
 # END_OF_HEADER
 #================================================================
 
-set -xe
-
 #== usage functions ==#
 SCRIPT_NAME=`basename $0`
 usagefull() { scriptinfo ful ; }
