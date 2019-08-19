@@ -20,6 +20,8 @@
 echo ${SCRIPT_NAME} $@
 printenv
 
+set -e
+
 #== usage functions ==#
 SCRIPT_NAME=`basename $0`
 usagefull() { scriptinfo ful ; }
