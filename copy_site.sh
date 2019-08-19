@@ -17,8 +17,6 @@
 #================================================================
 # END_OF_HEADER
 #================================================================
-echo ${SCRIPT_NAME} $@
-printenv
 
 set -e
 
@@ -109,6 +107,8 @@ if [ "$#" -ne 4 ]; then
 fi
 
 set -x
+echo ${SCRIPT_NAME} $@
+printenv
 
 DRUPAL_REPO_URL="git@bitbucket.org:alainlauzoncom/portfolio.git"
 BRANCH=${1}
