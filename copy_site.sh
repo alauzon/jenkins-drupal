@@ -101,7 +101,7 @@ shift $((${OPTIND} - 1)) ## shift options
 #  MAIN SCRIPT
 #============================
 
-if [ "$#" -ne 5 ]; then
+if [ "$#" -ne 4 ]; then
   usagefull
   exit 1
 fi
