@@ -106,6 +106,8 @@ if [ "$#" -ne 5 ]; then
   exit 1
 fi
 
+set -x
+
 DRUPAL_REPO_URL="git@bitbucket.org:alainlauzoncom/portfolio.git"
 BRANCH=${1}
 SITE=${2}
