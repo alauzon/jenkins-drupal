@@ -3,7 +3,7 @@
 # HEADER
 #================================================================
 #% SYNOPSIS
-#+    ${SCRIPT_NAME} [-h] DRUPAL_REPO_URL BRANCH SITE SOURCE_ENV TARGET_ENV
+#+    ${SCRIPT_NAME} [-h] BRANCH SITE SOURCE_ENV TARGET_ENV
 #%
 #% DESCRIPTION
 #%    Copy a site from prod to another one like dev or test.
@@ -17,6 +17,9 @@
 #================================================================
 # END_OF_HEADER
 #================================================================
+
+printenv
+exit 0
 
 #== usage functions ==#
 SCRIPT_NAME=`basename $0`
