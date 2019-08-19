@@ -19,7 +19,6 @@
 #================================================================
 echo ${SCRIPT_NAME} $@
 printenv
-exit 0
 
 #== usage functions ==#
 SCRIPT_NAME=`basename $0`
