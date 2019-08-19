@@ -24,7 +24,7 @@ set -e
 
 #== usage functions ==#
 SCRIPT_NAME=`basename $0`
-usagefull() { scriptinfo ful ; }
+usagefull() { scriptinfo full ; }
 scriptinfo() {
     headFilter="^#-"
     [[ "$1" = "usg" ]] && headFilter="^#+"
