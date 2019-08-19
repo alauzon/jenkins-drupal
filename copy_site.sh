@@ -106,11 +106,11 @@ if [ "$#" -ne 5 ]; then
   exit 1
 fi
 
-DRUPAL_REPO_URL=${1}
-BRANCH=${2}
-SITE=${3}
-SOURCE_ENV=${4}
-TARGET_ENV=${5}
+DRUPAL_REPO_URL="git@bitbucket.org:alainlauzoncom/portfolio.git"
+BRANCH=${1}
+SITE=${2}
+SOURCE_ENV=${3}
+TARGET_ENV=${4}
 
 USERNAME_VARNAME = ${!SITE}_USERNAME
 USERNAME=${!USERNAME_VARNAME}
