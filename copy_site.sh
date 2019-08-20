@@ -54,7 +54,7 @@ do
         LONG_OPTARG=$(echo $LONG_OPTION | grep "=" | cut -d'=' -f2)
         LONG_OPTIND=-1
         [[ "x$LONG_OPTARG" = "x" ]] && LONG_OPTIND=$OPTIND || LONG_OPTION=$(echo $OPTARG | cut -d'=' -f1)
-        [[ $LONG_OPTIND -ne -1 ]] && eval LONG_OPTARG="\$$LONG_OPTIND"
+        [[ ${LONG_OPTIND} -ne -1 ]] && eval LONG_OPTARG="\$${LONG_OPTIND}"
         OPTION=${ARRAY_OPTS[$LONG_OPTION]}
         [[ "x$OPTION" = "x" ]] &&  OPTION="?" OPTARG="-$LONG_OPTION"
 
@@ -86,11 +86,11 @@ do
             exit 0
             ;;
 
-        : ) error "${SCRIPT_NAME}: -$OPTARG: option requires an argument"
+        : ) error "${SCRIPT_NAME}: -${OPTARG}: option requires an argument"
             flagOptErr=1
             ;;
 
-        ? ) error "${SCRIPT_NAME}: -$OPTARG: unknown option"
+        ? ) error "${SCRIPT_NAME}: -${OPTARG}: unknown option"
             flagOptErr=1
             ;;
     esac
@@ -101,7 +101,7 @@ shift $((${OPTIND} - 1)) ## shift options
 #  MAIN SCRIPT
 #============================
 
-if [ "$#" -ne 4 ]; then
+if [[ "$#" -ne 4 ]]; then
   usagefull
   exit 1
 fi
@@ -162,21 +162,21 @@ TARGET_DB_PASSWORD=${!TARGET_DB_PASSWORD_VARNAME}
 rndstr=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''`
 
 # Prepare temporary transfer directory
-mkdir /tmp/$rndstr
+mkdir /tmp/${rndstr}
 
 # Cd to prod
-cd $SOURCE_HOME/public_html
+cd ${SOURCE_HOME}/public_html
 
 # Dump prod database
 /usr/local/bin/drush --yes sql-dump > /tmp/${rndstr}/sql-dump-prod.sql
 
 # Cd to dev
-cd $TARGET_HOME
+cd ${TARGET_HOME}
 rm -Rf * .g* .h* .l*
 
 # Get code from git repo
-git clone --single-branch --branch $BRANCH $DRUPAL_REPO_URL .
-chown -R $USERNAME:$USERNAME .
+git clone --single-branch --branch ${BRANCH} ${DRUPAL_REPO_URL} .
+chown -R ${USERNAME}:${USERNAME} .
 
 # CD to public_html
 cd public_html
@@ -185,17 +185,17 @@ cd public_html
 # The dev DB must already exists
 # @todo Is there a better way to do that?
 echo "SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')  FROM information_schema.tables  WHERE table_schema = 'user_dev';"\
-  | /usr/local/bin/drush --root=. --db-url=mysql://$TARGET_DB_USERNAME:$TARGET_DB_PASSWORD@localhost/$TARGET_DB_NAME sql-cli\
+  | /usr/local/bin/drush --root=. --db-url=mysql://${TARGET_DB_USERNAME}:${TARGET_DB_PASSWORD}@localhost/${TARGET_DB_NAME} sql-cli\
   | tail -n +2\
-  | /usr/local/bin/drush --root=. --db-url=mysql://$TARGET_DB_USERNAME:$TARGET_DB_PASSWORD@localhost/$TARGET_DB_NAME sql-cli
+  | /usr/local/bin/drush --root=. --db-url=mysql://${TARGET_DB_USERNAME}:${TARGET_DB_PASSWORD}@localhost/${TARGET_DB_NAME} sql-cli
 
 # Create settings.php file
 rm -f sites/default/settings.php
-/usr/local/bin/drush site-install --force --db-url=mysql://$TARGET_DB_USERNAME:$TARGET_DB_PASSWORD@localhost/$TARGET_DB_NAME -y
-chown $USERNAME:$USERNAME sites/default/settings.php
+/usr/local/bin/drush site-install --force --db-url=mysql://${TARGET_DB_USERNAME}:${TARGET_DB_PASSWORD}@localhost/${TARGET_DB_NAME} -y
+chown ${USERNAME}:${USERNAME} sites/default/settings.php
 
 # Copy prod DB to dev DB
-/usr/local/bin/drush --root=. --db-url=mysql://$TARGET_DB_USERNAME:$TARGET_DB_PASSWORD@localhost/$TARGET_DB_NAME sql-cli < /tmp/${rndstr}/sql-dump-prod.sql
+/usr/local/bin/drush --root=. --db-url=mysql://${TARGET_DB_USERNAME}:${TARGET_DB_PASSWORD}@localhost/${TARGET_DB_NAME} sql-cli < /tmp/${rndstr}/sql-dump-prod.sql
 
 # Cleanup the temporary transfer directory
 rm -Rf /tmp/${rndstr}
@@ -205,7 +205,7 @@ chmod +w sites/default sites/default/files
 rm -rf sites/default/files
 
 # Copy files and private directories from prod to dev
-cp -rp $SOURCE_HOME/public_html/sites/default/files sites/default/
+cp -rp ${SOURCE_HOME}/public_html/sites/default/files sites/default/
 chmod -w sites/default
 
 # Clear cache dev
